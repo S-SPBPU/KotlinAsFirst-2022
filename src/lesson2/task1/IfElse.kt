@@ -3,8 +3,7 @@
 package lesson2.task1
 
 import lesson1.task1.discriminant
-import kotlin.math.max
-import kotlin.math.sqrt
+import kotlin.math.*
 
 // Урок 2: ветвления (здесь), логический тип (см. 2.2).
 // Максимальное количество баллов = 6
@@ -133,7 +132,12 @@ fun rookOrBishopThreatens(
     kingX: Int, kingY: Int,
     rookX: Int, rookY: Int,
     bishopX: Int, bishopY: Int
-): Int = TODO()
+): Int {
+    return if (((kingX == rookX) || (kingY == rookY)) && ((kingX + kingY == bishopX + bishopY) || (kingX - kingY == bishopX - bishopY))) 3
+    else if ((kingX + kingY == bishopX + bishopY) || (kingX - kingY == bishopX - bishopY)) 2
+    else if ((kingX == rookX) || (kingY == rookY)) 1
+    else 0
+}
 
 /**
  * Простая (2 балла)
@@ -143,7 +147,12 @@ fun rookOrBishopThreatens(
  * прямоугольным (вернуть 1) или тупоугольным (вернуть 2).
  * Если такой треугольник не существует, вернуть -1.
  */
-fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
+fun triangleKind(a: Double, b: Double, c: Double): Int {
+    return if (a >= b + c || (b >= a + c) || (c >= a + b)) (-1)
+    else if (a.pow(2) == b.pow(2) + c.pow(2) || (b.pow(2) == a.pow(2) + c.pow(2)) || (c.pow(2) == a.pow(2) + b.pow(2))) (1)
+    else if (a.pow(2) > b.pow(2) + c.pow(2) || (b.pow(2) > a.pow(2) + c.pow(2)) || (c.pow(2) > a.pow(2) + b.pow(2))) (2)
+    else (0)
+}
 
 /**
  * Средняя (3 балла)
@@ -153,4 +162,11 @@ fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = TODO()
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
+    return if ((c > b) || (d < a)) (-1)
+    else if ((c == b) || (d == a)) (0)
+    else if ((a <= c) && (b >= d)) (d - c)
+    else if ((a >= c) && (b <= d)) (b - a)
+    else if (c > a) (b - c)
+    else (d - a)
+}

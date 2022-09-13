@@ -65,7 +65,7 @@ fun main() {
  * Пользователь задает время в часах, минутах и секундах, например, 8:20:35.
  * Рассчитать время в секундах, прошедшее с начала суток (30035 в данном случае).
  */
-fun seconds(hours: Int, minutes: Int, seconds: Int): Int = (hours * 60 * 60) + (minutes * 60) + seconds
+fun seconds(hours: Int, minutes: Int, seconds: Int): Int = hours * 60 * 60 + minutes * 60 + seconds
 
 /**
  * Тривиальная (1 балл)
@@ -75,7 +75,7 @@ fun seconds(hours: Int, minutes: Int, seconds: Int): Int = (hours * 60 * 60) + (
  * 1 сажень = 3 аршина = 48 вершков, 1 вершок = 4.445 см.
  */
 fun lengthInMeters(sagenes: Int, arshins: Int, vershoks: Int): Double =
-    ((sagenes * 48) + (arshins * 16) + vershoks) * (4.445 / 100)
+    (sagenes * 48 + arshins * 16 + vershoks) * (4.445 / 100)
 
 /**
  * Тривиальная (1 балл)
@@ -84,7 +84,7 @@ fun lengthInMeters(sagenes: Int, arshins: Int, vershoks: Int): Double =
  * Вывести значение того же угла в радианах (например, 0.63256).
  */
 fun angleInRadian(deg: Int, min: Int, sec: Int): Double =
-    deg * PI / 180 + (min * PI / (60 * 180)) + (sec * PI / (3600 * 180))
+    (deg * PI + (min * PI + sec * PI / 60) / 60) / 180
 
 /**
  * Тривиальная (1 балл)
@@ -93,7 +93,7 @@ fun angleInRadian(deg: Int, min: Int, sec: Int): Double =
  * Например, расстояние между (3, 0) и (0, 4) равно 5
  */
 fun trackLength(x1: Double, y1: Double, x2: Double, y2: Double): Double =
-    sqrt(((x1 - x2).pow(2)) + ((y1 - y2).pow(2)))
+    sqrt((x1 - x2).pow(2) + (y1 - y2).pow(2))
 
 /**
  * Простая (2 балла)
@@ -101,7 +101,7 @@ fun trackLength(x1: Double, y1: Double, x2: Double, y2: Double): Double =
  * Пользователь задает целое число, больше или равно 100 (например, 3801).
  * Определить третью цифру справа в этом числе (в данном случае 8).
  */
-fun thirdDigit(number: Int): Int = ((number / 100) % 10)
+fun thirdDigit(number: Int): Int = number / 100 % 10
 
 /**
  * Простая (2 балла)
@@ -129,4 +129,4 @@ fun accountInThreeYears(initial: Int, percent: Int): Double =
  * Пользователь задает целое трехзначное число (например, 478).
  * Необходимо вывести число, полученное из заданного перестановкой цифр в обратном порядке (например, 874).
  */
-fun numberRevert(number: Int): Int = (number % 10) * 100 + ((number / 10) % 10) * 10 + ((number / 100) % 10)
+fun numberRevert(number: Int): Int = number % 10 * 100 + number / 10 % 10 * 10 + number / 100 % 10

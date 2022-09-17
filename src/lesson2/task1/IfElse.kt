@@ -134,10 +134,8 @@ fun rookOrBishopThreatens(
     bishopX: Int, bishopY: Int
 ): Int =
     when {
-        ((kingX == rookX) || (kingY == rookY)) &&
-                ((kingX + kingY == bishopX + bishopY) || (kingX - kingY == bishopX - bishopY)) -> 3
-
-        (kingX + kingY == bishopX + bishopY) || (kingX - kingY == bishopX - bishopY) -> 2
+        ((kingX == rookX) || (kingY == rookY)) && (abs(kingX - bishopX) == abs(kingY - bishopY)) -> 3
+        abs(kingX - bishopX) == abs(kingY - bishopY) -> 2
         (kingX == rookX) || (kingY == rookY) -> 1
         else -> 0
     }
@@ -150,17 +148,17 @@ fun rookOrBishopThreatens(
  * прямоугольным (вернуть 1) или тупоугольным (вернуть 2).
  * Если такой треугольник не существует, вернуть -1.
  */
-fun triangleKind(a: Double, b: Double, c: Double): Int =
-    when {
+fun triangleKind(a: Double, b: Double, c: Double): Int {
+    val a2 = a.pow(2)
+    val b2 = b.pow(2)
+    val c2 = c.pow(2)
+    return when {
         a >= b + c || (b >= a + c) || (c >= a + b) -> -1
-        a.pow(2) == b.pow(2) + c.pow(2) || (b.pow(2) == a.pow(2) + c.pow(2))
-                || (c.pow(2) == a.pow(2) + b.pow(2)) -> 1
-
-        a.pow(2) > b.pow(2) + c.pow(2) || (b.pow(2) > a.pow(2) + c.pow(2))
-                || (c.pow(2) > a.pow(2) + b.pow(2)) -> 2
-
+        a2 == b2 + c2 || (b2 == a2 + c2) || (c2 == a2 + b2) -> 1
+        a2 > b2 + c2 || (b2 > a2 + c2) || (c2 > a2 + b2) -> 2
         else -> (0)
     }
+}
 
 /**
  * Средняя (3 балла)

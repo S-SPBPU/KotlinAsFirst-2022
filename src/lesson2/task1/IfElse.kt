@@ -156,7 +156,7 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
         a >= b + c || (b >= a + c) || (c >= a + b) -> -1
         a2 == b2 + c2 || (b2 == a2 + c2) || (c2 == a2 + b2) -> 1
         a2 > b2 + c2 || (b2 > a2 + c2) || (c2 > a2 + b2) -> 2
-        else -> (0)
+        else -> 0
     }
 }
 
@@ -172,8 +172,6 @@ fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int =
     when {
         (c > b) || (d < a) -> -1
         (c == b) || (d == a) -> 0
-        (a <= c) && (b >= d) -> d - c
-        (a >= c) && (b <= d) -> b - a
-        c > a -> b - c
-        else -> d - a
+        (a <= c) -> min(d, b) - c
+        else -> min(d, b) - a
     }

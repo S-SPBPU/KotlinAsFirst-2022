@@ -28,11 +28,8 @@ fun isNumberHappy(number: Int) = number % 10 + number / 10 % 10 == number / 100 
  * Определить, угрожают ли они друг другу. Вернуть true, если угрожают.
  * Считать, что ферзи не могут загораживать друг друга.
  */
-fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean = when {
-    (x1 == x2) || (y1 == y2) || (abs(x1 - x2) == abs(y1 - y2)) -> true
-    else -> false
-}
-
+fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean =
+    (x1 == x2) || (y1 == y2) || (abs(x1 - x2) == abs(y1 - y2))
 
 /**
  * Простая (2 балла)
@@ -70,9 +67,5 @@ fun circleInside(
  * кирпич 4 х 4 х 4 пройдёт через отверстие 4 х 4.
  * Вернуть true, если кирпич пройдёт
  */
-fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean = when {
-    a <= max(r, s) && (b <= min(r, s) || c <= min(r, s)) -> true
-    b <= max(r, s) && (a <= min(r, s) || c <= min(r, s)) -> true
-    c <= max(r, s) && (a <= min(r, s) || b <= min(r, s)) -> true
-    else -> false
-}
+fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean =
+    (min(a, min(b, c)) <= min(r, s)) && (a + b + c - max(a, max(b, c)) - min(a, min(b, c))) <= max(r, s)

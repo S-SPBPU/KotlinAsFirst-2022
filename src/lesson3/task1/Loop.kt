@@ -144,17 +144,7 @@ fun collatzSteps(x: Int): Int {
  * Для заданных чисел m и n найти наименьшее общее кратное, то есть,
  * минимальное число k, которое делится и на m и на n без остатка
  */
-fun lcm(m: Int, n: Int): Int {
-    var numberM = m
-    var numberN = n
-    while (numberM != numberN) {
-        when {
-            numberM > numberN -> numberM -= numberN
-            else -> numberN -= numberM
-        }
-    }
-    return n * m / numberM
-}
+fun lcm(m: Int, n: Int): Int = n * m / scd(m, n)
 
 /**
  * Средняя (3 балла)
@@ -163,7 +153,9 @@ fun lcm(m: Int, n: Int): Int {
  * Взаимно простые числа не имеют общих делителей, кроме 1.
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
-fun isCoPrime(m: Int, n: Int): Boolean {
+fun isCoPrime(m: Int, n: Int): Boolean = scd(m, n) == 1
+
+private fun scd(m: Int, n: Int): Int {
     var numberM = m
     var numberN = n
     while (numberM != numberN) {
@@ -172,7 +164,7 @@ fun isCoPrime(m: Int, n: Int): Boolean {
             else -> numberN -= numberM
         }
     }
-    return numberM == 1
+    return numberM
 }
 
 /**
@@ -215,9 +207,9 @@ fun hasDifferentDigits(n: Int): Boolean {
     var number = n
     while (number > 10) {
         if (number % 10 == number / 10 % 10) number /= 10
-        else number = -1
+        else return true
     }
-    return number == -1
+    return false
 }
 
 /**
@@ -230,14 +222,15 @@ fun hasDifferentDigits(n: Int): Boolean {
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
 fun sin(x: Double, eps: Double): Double {
-    var number = 999.0
+    var number = 1.0
     var sin = 0.0
-    var member = 0
+    var sequenceNumber = 0
     var degree = 1
+    val cycle = x % (2 * PI)
     while (eps < abs(number)) {
-        number = (-1.0).pow(member) * (x % (2 * PI)).pow(degree) / factorial(degree)
+        number = (-1.0).pow(sequenceNumber) * cycle.pow(degree) / factorial(degree)
         sin += number
-        member += 1
+        sequenceNumber += 1
         degree += 2
     }
     return sin
@@ -253,14 +246,15 @@ fun sin(x: Double, eps: Double): Double {
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
 fun cos(x: Double, eps: Double): Double {
-    var number = 999.0
+    var number = 1.0
     var cos = 0.0
-    var member = 2
+    var sequenceNumber = 2
     var degree = 0
+    val cycle = x % (2 * PI)
     while (eps < abs(number)) {
-        number = (-1.0).pow(member) * (x % (2 * PI)).pow(degree) / factorial(degree)
+        number = (-1.0).pow(sequenceNumber) * cycle.pow(degree) / factorial(degree)
         cos += number
-        member += 1
+        sequenceNumber += 1
         degree += 2
     }
     return cos
@@ -275,7 +269,27 @@ fun cos(x: Double, eps: Double): Double {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun squareSequenceDigit(n: Int): Int = TODO()
+fun squareSequenceDigit(n: Int): Int {
+    var number = 0
+    var square = 0
+    var count = 0
+    var result = 0
+    var numbercount = 0
+    for (i in 1..n) {
+        square = sqr(i)
+        number = square
+        numbercount = 0
+        while (number > 0) {
+            count += 1
+            if (count == n) break
+            numbercount += 1
+            number /= 10
+        }
+        if (count == n) result = revert(square) / (10.0).pow(numbercount).toInt() % 10
+    }
+    return result
+}
+
 /**
  * Сложная (5 баллов)
  *
@@ -285,4 +299,23 @@ fun squareSequenceDigit(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int = TODO()
+fun fibSequenceDigit(n: Int): Int {
+    var number = 0
+    var fibanachi = 0
+    var count = 0
+    var result = 0
+    var numbercount = 0
+    for (i in 1..n) {
+        fibanachi = fib(i)
+        number = fibanachi
+        numbercount = 0
+        while (number > 0) {
+            count += 1
+            if (count == n) break
+            numbercount += 1
+            number /= 10
+        }
+        if (count == n) result = revert(fibanachi) / (10.0).pow(numbercount).toInt() % 10
+    }
+    return result
+}

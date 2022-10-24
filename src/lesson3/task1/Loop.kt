@@ -174,7 +174,7 @@ private fun scd(m: Int, n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun revert(n: Int): Int {
+fun revert(n: Long): Long {
     var number = n / 10
     var result = n % 10
     while (number > 0) {
@@ -193,7 +193,7 @@ fun revert(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean = revert(n) == n
+fun isPalindrome(n: Int): Boolean = revert(n.toLong()).toInt() == n
 
 /**
  * Средняя (3 балла)
@@ -223,9 +223,9 @@ fun hasDifferentDigits(n: Int): Boolean {
  */
 fun sin(x: Double, eps: Double): Double {
     var number = 1.0
-    var sin = 0.0
-    var sequenceNumber = 0
-    var degree = 1
+    var sin = x % (2 * PI)
+    var sequenceNumber = 1
+    var degree = 3
     val cycle = x % (2 * PI)
     while (eps < abs(number)) {
         number = (-1.0).pow(sequenceNumber) * cycle.pow(degree) / factorial(degree)
@@ -247,9 +247,9 @@ fun sin(x: Double, eps: Double): Double {
  */
 fun cos(x: Double, eps: Double): Double {
     var number = 1.0
-    var cos = 0.0
-    var sequenceNumber = 2
-    var degree = 0
+    var cos = 1.0
+    var sequenceNumber = 3
+    var degree = 2
     val cycle = x % (2 * PI)
     while (eps < abs(number)) {
         number = (-1.0).pow(sequenceNumber) * cycle.pow(degree) / factorial(degree)
@@ -269,24 +269,16 @@ fun cos(x: Double, eps: Double): Double {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
+var count = 0
 fun squareSequenceDigit(n: Int): Int {
-    var number = 0
-    var square = 0
-    var count = 0
+    var expression = 0
     var result = 0
-    var numbercount = 0
     for (i in 1..n) {
-        square = sqr(i)
-        number = square
-        numbercount = 0
-        while (number > 0) {
-            count += 1
-            if (count == n) break
-            numbercount += 1
-            number /= 10
-        }
-        if (count == n) result = revert(square) / (10.0).pow(numbercount).toInt() % 10
+        expression = sqr(i)
+        result = cut(n, expression)
+        if (count == n) break
     }
+    count = 0
     return result
 }
 
@@ -300,22 +292,29 @@ fun squareSequenceDigit(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun fibSequenceDigit(n: Int): Int {
-    var number = 0
-    var fibanachi = 0
-    var count = 0
+    var expression = 0
     var result = 0
-    var numbercount = 0
     for (i in 1..n) {
-        fibanachi = fib(i)
-        number = fibanachi
-        numbercount = 0
-        while (number > 0) {
-            count += 1
-            if (count == n) break
-            numbercount += 1
-            number /= 10
-        }
-        if (count == n) result = revert(fibanachi) / (10.0).pow(numbercount).toInt() % 10
+        expression = fib(i)
+        result = cut(n, expression)
+        if (count == n) break
+    }
+    count = 0
+    return result
+}
+
+fun cut(n: Int, expression: Int): Int {
+    var number = expression
+    var result = 0
+    var numberCount = 0
+    while (number > 0) {
+        count += 1
+        if (count == n) break
+        numberCount += 1
+        number /= 10
+    }
+    if (count == n) {
+        result = (revert(expression.toLong()) / (10.0).pow(numberCount).toInt() % 10).toInt()
     }
     return result
 }

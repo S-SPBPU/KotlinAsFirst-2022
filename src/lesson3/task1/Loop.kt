@@ -174,7 +174,7 @@ private fun scd(m: Int, n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun revert(n: Long): Long {
+fun revert(n: Int): Int {
     var number = n / 10
     var result = n % 10
     while (number > 0) {
@@ -193,7 +193,7 @@ fun revert(n: Long): Long {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean = revert(n.toLong()).toInt() == n
+fun isPalindrome(n: Int): Boolean = revert(n) == n
 
 /**
  * Средняя (3 балла)
@@ -314,7 +314,17 @@ fun cut(n: Int, expression: Int): Int {
         number /= 10
     }
     if (count == n) {
-        result = (revert(expression.toLong()) / (10.0).pow(numberCount).toInt() % 10).toInt()
+        result = (revertLong(expression.toLong()) / (10.0).pow(numberCount).toInt() % 10).toInt()
+    }
+    return result
+}
+
+fun revertLong(n: Long): Long {
+    var number = n / 10
+    var result = n % 10
+    while (number > 0) {
+        result = result * 10 + number % 10
+        number /= 10
     }
     return result
 }

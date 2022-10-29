@@ -208,7 +208,18 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
  * Результат разложения вернуть в виде списка множителей, например 75 -> (3, 5, 5).
  * Множители в списке должны располагаться по возрастанию.
  */
-fun factorize(n: Int): List<Int> = TODO()
+fun factorize(n: Int): List<Int> {
+    val result = mutableListOf<Int>()
+    var divisible = n
+    var divider = 2
+    while (divisible > 1) {
+        if (divisible % divider == 0) {
+            result.add(divider)
+            divisible /= divider
+        } else divider += 1
+    }
+    return result
+}
 
 /**
  * Сложная (4 балла)
@@ -217,7 +228,7 @@ fun factorize(n: Int): List<Int> = TODO()
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
-fun factorizeToString(n: Int): String = TODO()
+fun factorizeToString(n: Int): String = factorize(n).joinToString(separator = "*")
 
 /**
  * Средняя (3 балла)
@@ -226,7 +237,16 @@ fun factorizeToString(n: Int): String = TODO()
  * Результат перевода вернуть в виде списка цифр в base-ичной системе от старшей к младшей,
  * например: n = 100, base = 4 -> (1, 2, 1, 0) или n = 250, base = 14 -> (1, 3, 12)
  */
-fun convert(n: Int, base: Int): List<Int> = TODO()
+fun convert(n: Int, base: Int): List<Int> {
+    var divisible = n
+    val result = mutableListOf<Int>()
+    while (divisible >= base) {
+        result.add(divisible % base)
+        divisible /= base
+    }
+    result.add(divisible)
+    return result.reversed()
+}
 
 /**
  * Сложная (4 балла)
@@ -239,7 +259,16 @@ fun convert(n: Int, base: Int): List<Int> = TODO()
  * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
  * (например, n.toString(base) и подобные), запрещается.
  */
-fun convertToString(n: Int, base: Int): String = TODO()
+fun convertToString(n: Int, base: Int): String {
+    var result = ""
+    val number = convert(n, base)
+    val alphabet = "abcdefghijklmnopqrstuvwxyz"
+    for (i in number.indices) {
+        if (number[i] < 10) result += number[i]
+        else result += alphabet[number[i] - 10]
+    }
+    return result
+}
 
 /**
  * Средняя (3 балла)

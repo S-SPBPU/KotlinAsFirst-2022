@@ -277,7 +277,13 @@ fun convertToString(n: Int, base: Int): String {
  * из системы счисления с основанием base в десятичную.
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
-fun decimal(digits: List<Int>, base: Int): Int = TODO()
+fun decimal(digits: List<Int>, base: Int): Int {
+    var summ = 0.0
+    for (i in digits.indices) {
+        summ += digits[i] * (base.toDouble()).pow(digits.size - 1 - i)
+    }
+    return summ.toInt()
+}
 
 /**
  * Сложная (4 балла)
@@ -291,7 +297,15 @@ fun decimal(digits: List<Int>, base: Int): Int = TODO()
  * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
  * (например, str.toInt(base)), запрещается.
  */
-fun decimalFromString(str: String, base: Int): Int = TODO()
+fun decimalFromString(str: String, base: Int): Int {
+    val alphabet = "abcdefghijklmnopqrstuvwxyz"
+    val result = mutableListOf<Int>()
+    for (i in str.indices) {
+        if (str[i] in '0'..'9') result.add(str[i] - '0')
+        else result.add(alphabet.indexOf(str[i]) + 10)
+    }
+    return decimal(result, base)
+}
 
 /**
  * Сложная (5 баллов)
@@ -301,7 +315,21 @@ fun decimalFromString(str: String, base: Int): Int = TODO()
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String = TODO()
+fun roman(n: Int): String {
+    var result = ""
+    var number = n
+    var i = 0
+    val roman = listOf("M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I")
+    val numbers = listOf(1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
+    while (number > 0) {
+        while (number >= numbers[i]) {
+            number -= numbers[i]
+            result += roman[i]
+        }
+        i += 1
+    }
+    return result
+}
 
 /**
  * Очень сложная (7 баллов)
@@ -310,4 +338,70 @@ fun roman(n: Int): String = TODO()
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO()
+fun russian(n: Int): String {
+    var number = n
+    val firstDigit =
+        listOf("один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
+    val secondDigit =
+        listOf("двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят", "восемьдесят", "девяносто")
+    val thirdDigit =
+        listOf("сто", "двести", "триста", "четыреста", "пятьсот", "шесот", "семьсот", "восемьсот", "девятьсот")
+    val firstThousandDigit =
+        listOf("одна", "две", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
+    val dozen =
+        listOf(
+            "десять",
+            "одиннадцать",
+            "двенадцать",
+            "тринадцать",
+            "четырнадцать",
+            "пятнадцать",
+            "шестнадцать",
+            "семнадцать",
+            "восемнадцать",
+            "девятнадцать"
+        )
+    val result = mutableListOf<String>()
+    if (n % 100 in 1..9) {
+        result.add(firstDigit[number % 10 - 1])
+        if (number / 10 == 0) return result.reversed().joinToString(separator = " ")
+    }
+    if (n % 100 >= 20) {
+        result.add(firstDigit[number % 10 - 1])
+        result.add(secondDigit[number / 10 % 10 - 2])
+        if (number / 100 == 0) return result.reversed().joinToString(separator = " ")
+    }
+    if (n % 100 in 10..19) {
+        result.add(dozen[number % 10])
+        if (number / 100 == 0) return result.reversed().joinToString(separator = " ")
+    }
+    number /= 100
+    if (number % 10 != 0) {
+        result.add(thirdDigit[number % 10 - 1])
+        if (number / 10 == 0) return result.reversed().joinToString(separator = " ")
+    }
+    number /= 10
+    when {
+        number % 100 == 1 -> result.add("тысяча")
+        number % 10 in 2..4 -> result.add("тысячи")
+        number % 100 in 11..20 -> result.add("тысяч")
+        number % 10 in 5..9 -> result.add("тысяч")
+        number % 10 == 0 -> result.add("тысяч")
+    }
+    if (number % 100 in 1..9) {
+        result.add(firstThousandDigit[number % 10 - 1])
+        if (number / 10 == 0) return result.reversed().joinToString(separator = " ")
+    }
+    if (number % 100 >= 20) {
+        result.add(firstThousandDigit[number % 10 - 1])
+        result.add(secondDigit[number / 10 % 10 - 2])
+        if (number / 100 == 0) return result.reversed().joinToString(separator = " ")
+    }
+    if (number % 100 in 10..19) {
+        result.add(dozen[number % 10])
+        if (number / 100 == 0) return result.reversed().joinToString(separator = " ")
+    }
+    number /= 100
+    result.add(thirdDigit[number % 10 - 1])
+    return result.reversed().joinToString(separator = " ")
+}

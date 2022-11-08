@@ -402,7 +402,3 @@ fun russian(n: Int): String {
     result.add(thirdDigit[number % 10 - 1])
     return result.reversed().joinToString(separator = " ")
 }
-
-fun main() {
-    println('b'.code - 87)
-}

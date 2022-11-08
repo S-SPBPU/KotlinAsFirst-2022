@@ -379,7 +379,7 @@ fun russian(n: Int): String {
     }
     number /= 10
     when {
-        number % 100 == 1 -> result.add("тысяча")
+        number % 10 == 1 -> result.add("тысяча")
         number % 10 in 2..4 -> result.add("тысячи")
         number % 100 in 11..20 -> result.add("тысяч")
         number % 10 in 5..9 -> result.add("тысяч")

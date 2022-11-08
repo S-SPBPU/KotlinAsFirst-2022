@@ -379,11 +379,11 @@ fun russian(n: Int): String {
     }
     number /= 10
     when {
-        number % 10 == 1 -> result.add("тысяча")
-        number % 10 in 2..4 -> result.add("тысячи")
         number % 100 in 11..20 -> result.add("тысяч")
         number % 10 in 5..9 -> result.add("тысяч")
         number % 10 == 0 -> result.add("тысяч")
+        number % 10 == 1 -> result.add("тысяча")
+        number % 10 in 2..4 -> result.add("тысячи")
     }
     if (number % 100 in 1..9) {
         result.add(firstThousandDigit[number % 10 - 1])

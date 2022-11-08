@@ -222,7 +222,7 @@ fun hasDifferentDigits(n: Int): Boolean {
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
 fun sin(x: Double, eps: Double): Double {
-    var number = 1.0
+    var number = x
     var sin = x % (2 * PI)
     var sequenceNumber = 1
     var degree = 3
@@ -246,7 +246,7 @@ fun sin(x: Double, eps: Double): Double {
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
 fun cos(x: Double, eps: Double): Double {
-    var number = 1.0
+    var number = x
     var cos = 1.0
     var sequenceNumber = 3
     var degree = 2
@@ -269,16 +269,18 @@ fun cos(x: Double, eps: Double): Double {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-var count = 0
 fun squareSequenceDigit(n: Int): Int {
-    var expression = 0
+    var square = 0
+    var count = 0
     var result = 0
     for (i in 1..n) {
-        expression = sqr(i)
-        result = cut(n, expression)
-        if (count == n) break
+        square = sqr(i)
+        count += digitNumber(square)
+        if (count >= n) {
+            result = (square / 10.0.pow((count - n).toDouble()) % 10.0).toInt()
+            break
+        }
     }
-    count = 0
     return result
 }
 
@@ -292,39 +294,16 @@ fun squareSequenceDigit(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun fibSequenceDigit(n: Int): Int {
-    var expression = 0
+    var fibanachi = 0
+    var count = 0
     var result = 0
     for (i in 1..n) {
-        expression = fib(i)
-        result = cut(n, expression)
-        if (count == n) break
-    }
-    count = 0
-    return result
-}
-
-fun cut(n: Int, expression: Int): Int {
-    var number = expression
-    var result = 0
-    var numberCount = 0
-    while (number > 0) {
-        count += 1
-        if (count == n) break
-        numberCount += 1
-        number /= 10
-    }
-    if (count == n) {
-        result = (revertLong(expression.toLong()) / (10.0).pow(numberCount).toInt() % 10).toInt()
-    }
-    return result
-}
-
-fun revertLong(n: Long): Long {
-    var number = n / 10
-    var result = n % 10
-    while (number > 0) {
-        result = result * 10 + number % 10
-        number /= 10
+        fibanachi = fib(i)
+        count += digitNumber(fibanachi)
+        if (count >= n) {
+            result = (fibanachi / 10.0.pow((count - n).toDouble()) % 10.0).toInt()
+            break
+        }
     }
     return result
 }

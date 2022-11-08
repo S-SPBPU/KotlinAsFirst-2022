@@ -155,7 +155,7 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  */
 fun times(a: List<Int>, b: List<Int>): Int {
     val result = mutableListOf<Int>()
-    return if (a.isNotEmpty() and b.isNotEmpty()) {
+    return if (a.isNotEmpty() && b.isNotEmpty()) {
         for (i in a.indices) {
             result.add(a[i] * b[i])
         }
@@ -193,9 +193,9 @@ fun polynom(p: List<Int>, x: Int): Int {
  */
 fun accumulate(list: MutableList<Int>): MutableList<Int> {
     val saveList = list.toList()
-    if (list.isNotEmpty() and (list.size > 1)) {
+    if (list.isNotEmpty() && (list.size > 1)) {
         for (i in 1 until list.size) {
-            list[i] = (saveList.take(i + 1)).sum()
+            list[i] = list[i] + list[i - 1]
         }
     }
     return list
@@ -259,15 +259,12 @@ fun convert(n: Int, base: Int): List<Int> {
  * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
  * (например, n.toString(base) и подобные), запрещается.
  */
-fun convertToString(n: Int, base: Int): String {
-    var result = ""
+fun convertToString(n: Int, base: Int) = buildString {
     val number = convert(n, base)
-    val alphabet = "abcdefghijklmnopqrstuvwxyz"
     for (i in number.indices) {
-        if (number[i] < 10) result += number[i]
-        else result += alphabet[number[i] - 10]
+        if (number[i] < 10) append(number[i])
+        else append('a' + (number[i] - 10))
     }
-    return result
 }
 
 /**
@@ -298,11 +295,10 @@ fun decimal(digits: List<Int>, base: Int): Int {
  * (например, str.toInt(base)), запрещается.
  */
 fun decimalFromString(str: String, base: Int): Int {
-    val alphabet = "abcdefghijklmnopqrstuvwxyz"
     val result = mutableListOf<Int>()
     for (i in str.indices) {
         if (str[i] in '0'..'9') result.add(str[i] - '0')
-        else result.add(alphabet.indexOf(str[i]) + 10)
+        else result.add(str[i].code - 87)
     }
     return decimal(result, base)
 }
@@ -315,8 +311,7 @@ fun decimalFromString(str: String, base: Int): Int {
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String {
-    var result = ""
+fun roman(n: Int) = buildString {
     var number = n
     var i = 0
     val roman = listOf("M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I")
@@ -324,11 +319,10 @@ fun roman(n: Int): String {
     while (number > 0) {
         while (number >= numbers[i]) {
             number -= numbers[i]
-            result += roman[i]
+            append(roman[i])
         }
         i += 1
     }
-    return result
 }
 
 /**
@@ -345,7 +339,7 @@ fun russian(n: Int): String {
     val secondDigit =
         listOf("двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят", "восемьдесят", "девяносто")
     val thirdDigit =
-        listOf("сто", "двести", "триста", "четыреста", "пятьсот", "шесот", "семьсот", "восемьсот", "девятьсот")
+        listOf("сто", "двести", "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот")
     val firstThousandDigit =
         listOf("одна", "две", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
     val dozen =
@@ -366,7 +360,10 @@ fun russian(n: Int): String {
         result.add(firstDigit[number % 10 - 1])
         if (number / 10 == 0) return result.reversed().joinToString(separator = " ")
     }
-    if (n % 100 >= 20) {
+    if (n % 100 >= 20 && n % 10 == 0) {
+        result.add(secondDigit[number / 10 % 10 - 2])
+        if (number / 100 == 0) return result.reversed().joinToString(separator = " ")
+    } else if (n % 100 >= 20) {
         result.add(firstDigit[number % 10 - 1])
         result.add(secondDigit[number / 10 % 10 - 2])
         if (number / 100 == 0) return result.reversed().joinToString(separator = " ")
@@ -404,4 +401,8 @@ fun russian(n: Int): String {
     number /= 100
     result.add(thirdDigit[number % 10 - 1])
     return result.reversed().joinToString(separator = " ")
+}
+
+fun main() {
+    println('b'.code - 87)
 }

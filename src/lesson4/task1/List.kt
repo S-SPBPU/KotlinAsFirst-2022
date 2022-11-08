@@ -389,7 +389,10 @@ fun russian(n: Int): String {
         result.add(firstThousandDigit[number % 10 - 1])
         if (number / 10 == 0) return result.reversed().joinToString(separator = " ")
     }
-    if (number % 100 >= 20) {
+    if (number % 100 >= 20 && number % 10 == 0) {
+        result.add(secondDigit[number / 10 % 10 - 2])
+        if (number / 100 == 0) return result.reversed().joinToString(separator = " ")
+    } else if (number % 100 >= 20) {
         result.add(firstThousandDigit[number % 10 - 1])
         result.add(secondDigit[number / 10 % 10 - 2])
         if (number / 100 == 0) return result.reversed().joinToString(separator = " ")

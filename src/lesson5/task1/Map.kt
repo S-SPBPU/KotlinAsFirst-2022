@@ -116,7 +116,7 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
  */
 fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
     for ((key, value) in a)
-        if (value == b[key]) return true
+        if (value == b[key] || (a.isEmpty() && b.isEmpty())) return true
     return false
 }
 
@@ -151,7 +151,7 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
     val result = mutableListOf<String>()
     for (i in a.indices) {
         for (p in b.indices)
-            if (a[i] == b[p]) result.add(a[i])
+            if (a[i] == b[p] && a[i] !in result) result.add(a[i])
     }
     return result
 }
@@ -230,7 +230,7 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
         if ((stuff[key]?.first == kind) && ((stuff[key]?.second ?: return null) <= lowestPrise))
             lowestPrise = (stuff[key]?.second ?: return null)
     for ((key) in stuff)
-        if ((stuff[key]?.second ?: return null) == lowestPrise) return key
+        if ((stuff[key]?.second ?: return null) == lowestPrise && key.isNotEmpty()) return key
     return null
 }
 
@@ -244,14 +244,11 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
-    var result = ""
     for (i in word.indices) {
-        if (word[i].lowercaseChar() !in chars) result += word[i]
+        if (word[i].lowercase() !in chars.toString().lowercase()) return false
     }
-    if (result.isEmpty()) return true
-    return false
+    return true
 }
-
 /**
  * Средняя (4 балла)
  *

@@ -101,7 +101,7 @@ fun dateStrToDigit(str: String): String {
         }
     else return ""
     if (daysInMonth(result[1].toInt(), result[2].toInt()) >= result[0].toInt())
-        return String.format("%02d.%02d.%02d", result[0].toInt(), result[1].toInt(), result[2].toInt())
+        return String.format("%02d.%02d.%01d", result[0].toInt(), result[1].toInt(), result[2].toInt())
     return ""
 }
 

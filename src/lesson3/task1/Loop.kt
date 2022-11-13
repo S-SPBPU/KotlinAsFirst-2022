@@ -270,7 +270,7 @@ fun cos(x: Double, eps: Double): Double {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun squareSequenceDigit(n: Int): Int {
-    var square = 0
+    var square: Int
     var count = 0
     var result = 0
     for (i in 1..n) {
@@ -294,7 +294,7 @@ fun squareSequenceDigit(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun fibSequenceDigit(n: Int): Int {
-    var fibanachi = 0
+    var fibanachi: Int
     var count = 0
     var result = 0
     for (i in 1..n) {

@@ -192,7 +192,6 @@ fun polynom(p: List<Int>, x: Int): Int {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun accumulate(list: MutableList<Int>): MutableList<Int> {
-    val saveList = list.toList()
     if (list.isNotEmpty() && (list.size > 1)) {
         for (i in 1 until list.size) {
             list[i] = list[i] + list[i - 1]

@@ -2,6 +2,8 @@
 
 package lesson6.task1
 
+import lesson2.task2.*
+
 // Урок 6: разбор строк, исключения
 // Максимальное количество баллов = 13
 // Рекомендуемое количество баллов = 11
@@ -74,7 +76,34 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun dateStrToDigit(str: String): String = TODO()
+fun dateStrToDigit(str: String): String {
+    val month = listOf(
+        "января",
+        "февраля",
+        "марта",
+        "апреля",
+        "мая",
+        "июня",
+        "июля",
+        "августа",
+        "сентября",
+        "октября",
+        "ноября",
+        "декабря"
+    )
+    val result = str.split(" ").toMutableList()
+    if (result.size == 3 && result[1] in month)
+        for (i in month.indices) {
+            if (result[1] == month[i]) {
+                result[1] = (month.indexOf(month[i]) + 1).toString()
+                break
+            }
+        }
+    else return ""
+    if (daysInMonth(result[1].toInt(), result[2].toInt()) >= result[0].toInt())
+        return String.format("%02d.%02d.%02d", result[0].toInt(), result[1].toInt(), result[2].toInt())
+    return ""
+}
 
 /**
  * Средняя (4 балла)

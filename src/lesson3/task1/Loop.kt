@@ -270,18 +270,15 @@ fun cos(x: Double, eps: Double): Double {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun squareSequenceDigit(n: Int): Int {
-    var square: Int
+    var square = 0
     var count = 0
-    var result = 0
-    for (i in 1..n) {
-        square = sqr(i)
+    var number = 0
+    while (count < n) {
+        number += 1
+        square = sqr(number)
         count += digitNumber(square)
-        if (count >= n) {
-            result = (square / 10.0.pow((count - n).toDouble()) % 10.0).toInt()
-            break
-        }
     }
-    return result
+    return retrieveTargetPart(square, count - n)
 }
 
 /**
@@ -294,16 +291,15 @@ fun squareSequenceDigit(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun fibSequenceDigit(n: Int): Int {
-    var fibanachi: Int
+    var fibanachi = 0
     var count = 0
-    var result = 0
-    for (i in 1..n) {
-        fibanachi = fib(i)
+    var number = 0
+    while (count < n) {
+        number += 1
+        fibanachi = fib(number)
         count += digitNumber(fibanachi)
-        if (count >= n) {
-            result = (fibanachi / 10.0.pow((count - n).toDouble()) % 10.0).toInt()
-            break
-        }
     }
-    return result
+    return retrieveTargetPart(fibanachi, count - n)
 }
+
+fun retrieveTargetPart(number: Int, divider: Int) = (number / 10.0.pow(divider.toDouble()) % 10.0).toInt()

@@ -297,7 +297,7 @@ fun decimalFromString(str: String, base: Int): Int {
     val result = mutableListOf<Int>()
     for (i in str.indices) {
         if (str[i] in '0'..'9') result.add(str[i] - '0')
-        else result.add(str[i].code - 87)
+        else result.add(str[i] - 'a' + 10)
     }
     return decimal(result, base)
 }
@@ -355,19 +355,19 @@ fun russian(n: Int): String {
             "девятнадцать"
         )
     val result = mutableListOf<String>()
-    if (n % 100 in 1..9) {
+    if (number % 100 in 1..9) {
         result.add(firstDigit[number % 10 - 1])
         if (number / 10 == 0) return result.reversed().joinToString(separator = " ")
     }
-    if (n % 100 >= 20 && n % 10 == 0) {
+    if (number % 100 >= 20 && n % 10 == 0) {
         result.add(secondDigit[number / 10 % 10 - 2])
         if (number / 100 == 0) return result.reversed().joinToString(separator = " ")
-    } else if (n % 100 >= 20) {
+    } else if (number % 100 >= 20) {
         result.add(firstDigit[number % 10 - 1])
         result.add(secondDigit[number / 10 % 10 - 2])
         if (number / 100 == 0) return result.reversed().joinToString(separator = " ")
     }
-    if (n % 100 in 10..19) {
+    if (number % 100 in 10..19) {
         result.add(dozen[number % 10])
         if (number / 100 == 0) return result.reversed().joinToString(separator = " ")
     }
@@ -378,9 +378,7 @@ fun russian(n: Int): String {
     }
     number /= 10
     when {
-        number % 100 in 11..20 -> result.add("тысяч")
-        number % 10 in 5..9 -> result.add("тысяч")
-        number % 10 == 0 -> result.add("тысяч")
+        number % 100 in 11..20 || number % 10 in 5..9 || number % 10 == 0 -> result.add("тысяч")
         number % 10 == 1 -> result.add("тысяча")
         number % 10 in 2..4 -> result.add("тысячи")
     }

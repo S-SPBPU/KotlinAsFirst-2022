@@ -98,9 +98,10 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  */
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
     val result = mutableMapOf<Int, MutableList<String>>()
-    for ((key, value) in grades)
-        if (value in result) result[value]?.add(key)
-        else result[value] = mutableListOf(key)
+    for ((key, value) in grades) {
+        result[value]?.add(key)
+        if (result[value].isNullOrEmpty()) result[value] = mutableListOf(key)
+    }
     return result
 }
 
@@ -147,14 +148,7 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): MutableMa
  * В выходном списке не должно быть повторяющихся элементов,
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
-    val result = mutableListOf<String>()
-    for (i in a.indices) {
-        for (p in b.indices)
-            if (a[i] == b[p] && a[i] !in result) result.add(a[i])
-    }
-    return result
-}
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.intersect(b.toSet()).toList()
 
 /**
  * Средняя (3 балла)
@@ -193,20 +187,16 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  */
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
     val result = mutableMapOf<String, Double>()
-    for ((key, value) in stockPrices)
-        if (key in result) result[key] = result[key]!! + value
-        else result[key] = value
-    for ((name, value) in result)
-        result[name] = value / counter(stockPrices, name)
+    val list = stockPrices.groupBy({ it.first }, { it.second })
+    var sum = 0.0
+    for ((key, value) in list) {
+        for (i in value.indices) {
+            sum += value[i]
+        }
+        result[key] = sum / value.size
+        sum = 0.0
+    }
     return result
-}
-
-fun counter(stockPrices: List<Pair<String, Double>>, name: String): Int {
-    var count = 0
-    val newKey = mapOf(name to 0)
-    for ((key) in stockPrices)
-        if (key in newKey) count += 1
-    return count
 }
 
 /**
@@ -226,12 +216,13 @@ fun counter(stockPrices: List<Pair<String, Double>>, name: String): Int {
  */
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
     var lowestPrise = Double.MAX_VALUE
+    var name: String? = null
     for ((key) in stuff)
-        if ((stuff[key]?.first == kind) && ((stuff[key]?.second ?: return null) <= lowestPrise))
-            lowestPrise = (stuff[key]?.second ?: return null)
-    for ((key) in stuff)
-        if ((stuff[key]?.first == kind) && (stuff[key]?.second ?: return null) == lowestPrise) return key
-    return null
+        if ((stuff[key]?.first == kind) && ((stuff[key]?.second!!) <= lowestPrise)) {
+            lowestPrise = (stuff[key]?.second!!)
+            name = key
+        }
+    return name
 }
 
 /**
@@ -245,7 +236,7 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     var result = word.lowercase()
-    for (element in chars) {
+    for (element in chars.toSet()) {
         result = result.replace(element.lowercase(), "")
     }
     return result.isEmpty()
@@ -265,9 +256,9 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
  */
 fun extractRepeats(list: List<String>): Map<String, Int> {
     val result = mutableMapOf<String, Int>()
-    for (i in list.indices) {
-        if (list[i] in result) result[list[i]] = result.getValue(list[i]) + 1
-        else result[list[i]] = 1
+    list.forEach {
+        if (it in result) result[it] = result.getValue(it) + 1
+        else result[it] = 1
     }
     return result.filterValues { it > 1 }
 }
@@ -349,9 +340,10 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    for (i in list.indices - list.indexOf(-1)) {
-        for (p in i + 1 until list.size)
-            if (list[i] + list[p] == number) return (Pair(list.indexOf(list[i]), list.indexOf(list[p])))
+    val pairs = mutableMapOf<Int, Int>()
+    for (i in list.indices) {
+        if (pairs.containsKey(number - list[i])) return Pair(pairs[number - list[i]]!!, i)
+        pairs[list[i]] = i
     }
     return Pair(-1, -1)
 }

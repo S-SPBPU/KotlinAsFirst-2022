@@ -354,51 +354,49 @@ fun russian(n: Int): String {
             "восемнадцать",
             "девятнадцать"
         )
-    val result = mutableListOf<String>()
-    if (number % 100 in 1..9) {
-        result.add(firstDigit[number % 10 - 1])
-        if (number / 10 == 0) return result.reversed().joinToString(separator = " ")
+    var result = mutableListOf<String>()
+    result = translator(result, number, firstDigit, secondDigit, thirdDigit, dozen)
+    number /= 1000
+    if (n >= 1000) {
+        when {
+            number % 100 in 11..20 || number % 10 in 5..9 || number % 10 == 0 -> result.add("тысяч")
+            number % 10 == 1 -> result.add("тысяча")
+            number % 10 in 2..4 -> result.add("тысячи")
+        }
     }
-    if (number % 100 >= 20 && n % 10 == 0) {
-        result.add(secondDigit[number / 10 % 10 - 2])
-        if (number / 100 == 0) return result.reversed().joinToString(separator = " ")
-    } else if (number % 100 >= 20) {
-        result.add(firstDigit[number % 10 - 1])
-        result.add(secondDigit[number / 10 % 10 - 2])
-        if (number / 100 == 0) return result.reversed().joinToString(separator = " ")
-    }
-    if (number % 100 in 10..19) {
-        result.add(dozen[number % 10])
-        if (number / 100 == 0) return result.reversed().joinToString(separator = " ")
-    }
-    number /= 100
-    if (number % 10 != 0) {
-        result.add(thirdDigit[number % 10 - 1])
-        if (number / 10 == 0) return result.reversed().joinToString(separator = " ")
-    }
-    number /= 10
-    when {
-        number % 100 in 11..20 || number % 10 in 5..9 || number % 10 == 0 -> result.add("тысяч")
-        number % 10 == 1 -> result.add("тысяча")
-        number % 10 in 2..4 -> result.add("тысячи")
-    }
-    if (number % 100 in 1..9) {
-        result.add(firstThousandDigit[number % 10 - 1])
-        if (number / 10 == 0) return result.reversed().joinToString(separator = " ")
-    }
-    if (number % 100 >= 20 && number % 10 == 0) {
-        result.add(secondDigit[number / 10 % 10 - 2])
-        if (number / 100 == 0) return result.reversed().joinToString(separator = " ")
-    } else if (number % 100 >= 20) {
-        result.add(firstThousandDigit[number % 10 - 1])
-        result.add(secondDigit[number / 10 % 10 - 2])
-        if (number / 100 == 0) return result.reversed().joinToString(separator = " ")
-    }
-    if (number % 100 in 10..19) {
-        result.add(dozen[number % 10])
-        if (number / 100 == 0) return result.reversed().joinToString(separator = " ")
-    }
-    number /= 100
-    result.add(thirdDigit[number % 10 - 1])
+    result = translator(result, number, firstThousandDigit, secondDigit, thirdDigit, dozen)
     return result.reversed().joinToString(separator = " ")
+}
+
+fun translator(
+    result: MutableList<String>,
+    number: Int,
+    firstDigit: List<String>,
+    secondDigit: List<String>,
+    thirdDigit: List<String>,
+    dozen: List<String>
+): MutableList<String> {
+    var funNumber = number
+    if (funNumber % 100 in 1..9) {
+        result.add(firstDigit[funNumber % 10 - 1])
+        if (funNumber / 10 == 0) return result
+    }
+    if (funNumber % 100 >= 20 && funNumber % 10 == 0) {
+        result.add(secondDigit[funNumber / 10 % 10 - 2])
+        if (funNumber / 100 == 0) return result
+    } else if (funNumber % 100 >= 20) {
+        result.add(firstDigit[funNumber % 10 - 1])
+        result.add(secondDigit[funNumber / 10 % 10 - 2])
+        if (funNumber / 100 == 0) return result
+    }
+    if (funNumber % 100 in 10..19) {
+        result.add(dozen[funNumber % 10])
+        if (funNumber / 100 == 0) return result
+    }
+    funNumber /= 100
+    if (funNumber % 10 != 0) {
+        result.add(thirdDigit[funNumber % 10 - 1])
+        if (funNumber / 10 == 0) return result
+    }
+    return result
 }

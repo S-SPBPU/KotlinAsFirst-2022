@@ -188,13 +188,9 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
     val result = mutableMapOf<String, Double>()
     val list = stockPrices.groupBy({ it.first }, { it.second })
-    var sum = 0.0
     for ((key, value) in list) {
-        for (i in value.indices) {
-            sum += value[i]
-        }
+        val sum = value.sumOf { it }
         result[key] = sum / value.size
-        sum = 0.0
     }
     return result
 }

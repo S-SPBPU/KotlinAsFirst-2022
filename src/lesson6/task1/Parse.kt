@@ -137,9 +137,9 @@ fun dateDigitToStr(digital: String): String {
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
 fun flattenPhoneNumber(phone: String): String {
-    return if (!phone.matches(Regex("""\+ ?.*\+.*""")) &&
+    return if (phone.matches(Regex("""\+?(\(\S\))?.*""")) &&
         !phone.contains(Regex("""\( *\)""")) &&
-        !phone.contains(Regex("""[A-z~!@#${'$'}%^&*_/|<>]"""))
+        !phone.contains(Regex("""[A-z~!@#${'$'}%^&*\\_/|<>]"""))
     )
         phone.split("(", ")", "-", " ").joinToString("")
     else ""
@@ -221,7 +221,7 @@ fun firstDuplicateIndex(str: String): Int {
     val words = str.lowercase().split(" ")
     var count = 0
     if (words.size > 1) {
-        for (i in words.indices) {
+        for (i in 0..words.size - 2) {
             if (words[i].lowercase() == words[i + 1].lowercase()) return count
             count += 1 + words[i].length
         }
@@ -241,12 +241,12 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше нуля либо равны нулю.
  */
 fun mostExpensive(description: String): String {
-    if (!description.matches(Regex("""([А-я]+\s\d*(\.\d*)?;?\s?)*""")) || description.isEmpty()) return ""
+    if (!description.matches(Regex("""([A-я]+\s\d*(\.\d*)?;?\s?)*""")) || description.isEmpty()) return ""
     val list = description.split(";", " ")
     var max = 0.0
     var maxName = ""
     for (i in list.indices step 3) {
-        if (list[i + 1].toDouble() > max) {
+        if (list[i + 1].toDouble() >= max) {
             max = list[i + 1].toDouble()
             maxName = list[i]
         }

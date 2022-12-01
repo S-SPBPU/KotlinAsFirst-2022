@@ -139,7 +139,7 @@ fun check(day: Int, month: Int, year: Int): Boolean = year > 0 && daysInMonth(mo
 fun flattenPhoneNumber(phone: String): String =
     if (phone.matches(Regex("""\+?(\(\S\))?.*""")) &&
         !phone.contains(Regex("""\( *\)""")) &&
-        !phone.contains(Regex("""[A-я~!@#${'$'}%^&*\\_/|<>"]"""))
+        phone.matches(Regex("""[\d\s\-+()]+"""))
     )
         phone.split("(", ")", "-", " ").joinToString("")
     else ""
@@ -242,7 +242,7 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше нуля либо равны нулю.
  */
 fun mostExpensive(description: String): String {
-    if (!description.matches(Regex("""((\S+\s\d+(\.\d)?;\s)+)?(\S+ \d+(\.\d+)?)"""))) return ""
+    if (!description.matches(Regex("""((\S+\s\d+(\.\d+)?;\s)+)?(\S+ \d+(\.\d+)?)"""))) return ""
     val list = description.split(";", " ")
     var max = 0.0
     var maxName = ""
@@ -267,7 +267,7 @@ fun mostExpensive(description: String): String {
  * Вернуть -1, если roman не является корректным римским числом
  */
 fun fromRoman(roman: String): Int {
-    if (!roman.contains(Regex("""[MCDXLVI]"""))) return -1
+    if (!roman.matches(Regex("""[MCDXLVI]+"""))) return -1
     val numbers = mapOf(
         "M" to 1000,
         "CM" to 900,

@@ -355,7 +355,7 @@ fun russian(n: Int): String {
             "девятнадцать"
         )
     var result = mutableListOf<String>()
-    result = translator(result, number, firstDigit, secondDigit, thirdDigit, dozen)
+    result = translate(result, number, firstDigit, secondDigit, thirdDigit, dozen)
     number /= 1000
     if (n >= 1000) {
         when {
@@ -364,11 +364,11 @@ fun russian(n: Int): String {
             number % 10 in 2..4 -> result.add("тысячи")
         }
     }
-    result = translator(result, number, firstThousandDigit, secondDigit, thirdDigit, dozen)
+    translate(result, number, firstThousandDigit, secondDigit, thirdDigit, dozen)
     return result.reversed().joinToString(separator = " ")
 }
 
-fun translator(
+fun translate(
     result: MutableList<String>,
     number: Int,
     firstDigit: List<String>,

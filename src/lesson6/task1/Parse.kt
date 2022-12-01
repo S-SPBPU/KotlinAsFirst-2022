@@ -3,7 +3,6 @@
 package lesson6.task1
 
 import lesson2.task2.*
-import java.util.*
 
 // Урок 6: разбор строк, исключения
 // Максимальное количество баллов = 13
@@ -97,7 +96,7 @@ fun dateStrToDigit(str: String): String {
     val result = str.split(" ").toMutableList()
     if (result[1] in month) result[1] = (month.indexOf(result[1]) + 1).toString()
     else return ""
-    if (result[2].toInt() > 0 && daysInMonth(result[1].toInt(), result[2].toInt()) >= result[0].toInt())
+    if (check(result[0].toInt(), result[1].toInt(), result[2].toInt()))
         return String.format("%02d.%02d.%01d", result[0].toInt(), result[1].toInt(), result[2].toInt())
     return ""
 }
@@ -114,13 +113,14 @@ fun dateStrToDigit(str: String): String {
  */
 fun dateDigitToStr(digital: String): String {
     if (!digital.matches(Regex("""\d*\.([0-9]{2})\.\d*"""))) return ""
-    val result = digital.split(".").toMutableList()
-    if (result[1].toInt() in 1..12) result[1] = month[result[1].toInt() - 1]
-    else return ""
-    if (result[2].toInt() > 0 && daysInMonth(month.indexOf(result[1]) + 1, result[2].toInt()) >= result[0].toInt())
-        return String.format("%d %s %d", result[0].toInt(), result[1], result[2].toInt())
+    val result = digital.split(".").map { it.toInt() }.toMutableList()
+    if (result[1] !in 1..12) return ""
+    if (check(result[0], result[1], result[2]))
+        return String.format("%d %s %d", result[0], month[result[1] - 1], result[2])
     return ""
 }
+
+fun check(day: Int, month: Int, year: Int): Boolean = year > 0 && daysInMonth(month, year) >= day
 
 /**
  * Средняя (4 балла)
@@ -136,14 +136,13 @@ fun dateDigitToStr(digital: String): String {
  *
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
-fun flattenPhoneNumber(phone: String): String {
-    return if (phone.matches(Regex("""\+?(\(\S\))?.*""")) &&
+fun flattenPhoneNumber(phone: String): String =
+    if (phone.matches(Regex("""\+?(\(\S\))?.*""")) &&
         !phone.contains(Regex("""\( *\)""")) &&
-        !phone.contains(Regex("""[A-z~!@#${'$'}%^&*\\_/|<>]"""))
+        !phone.contains(Regex("""[A-я~!@#${'$'}%^&*\\_/|<>]"""))
     )
         phone.split("(", ")", "-", " ").joinToString("")
     else ""
-}
 
 /**
  * Средняя (5 баллов)
@@ -158,7 +157,9 @@ fun flattenPhoneNumber(phone: String): String {
 fun bestLongJump(jumps: String): Int {
     val numbers = jumps.split(" ", "%", "-")
     var max = 0
-    if (jumps.contains(Regex("""[^\d\s%\-]""")) || !jumps.contains(Regex("""\d"""))) return -1
+    if (!jumps.matches(Regex("""((\d+|%|-)\s)+(\d+|%|-)""")) ||
+        !jumps.contains(Regex("""\d"""))
+    ) return -1
     else for (i in numbers) {
         if (i.isNotEmpty() && i.toInt() > max) max = i.toInt()
     }
@@ -179,7 +180,7 @@ fun bestLongJump(jumps: String): Int {
 fun bestHighJump(jumps: String): Int {
     val numbers = jumps.split(" ")
     var max = 0
-    if (jumps.contains(Regex("""[^\d\s%\-+]""")) || !jumps.contains(Regex("""\+"""))) return -1
+    if (jumps.contains(Regex("""[^\d\s%\-+]""")) || !jumps.contains(Regex("""\+""")) || jumps.contains(Regex("""([%+\-]\S\d+)"""))) return -1
     else for (i in 0..numbers.size - 2) {
         if ('+' in numbers[i + 1] && numbers[i].toInt() > max) max = numbers[i].toInt()
     }
@@ -196,7 +197,7 @@ fun bestHighJump(jumps: String): Int {
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 fun plusMinus(expression: String): Int {
-    if (!expression.matches(Regex("""\d*(\s([+\-])\s\d*)*"""))) throw IllegalArgumentException(expression)
+    require(expression.matches(Regex("""\d+(\s([+\-])\s\d+)*"""))) { IllegalArgumentException(expression) }
     val task = expression.split(" ")
     var result = task[0].toInt()
     if (task.size > 1) {
@@ -241,7 +242,7 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше нуля либо равны нулю.
  */
 fun mostExpensive(description: String): String {
-    if (!description.matches(Regex("""(\S* \d*(\.\d*)?;?\s?)*""")) || description.isEmpty()) return ""
+    if (!description.matches(Regex("""(([A-я]+\s\d+(\.\d)?;\s)+)?([A-я]+ \d+(\.\d+)?)"""))) return ""
     val list = description.split(";", " ")
     var max = 0.0
     var maxName = ""
@@ -265,7 +266,41 @@ fun mostExpensive(description: String): String {
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+fun fromRoman(roman: String): Int {
+    if (roman.contains(Regex("""[^MCDXLVI]"""))) return -1
+    val numbers = mapOf(
+        "M" to 1000,
+        "CM" to 900,
+        "D" to 500,
+        "CD" to 400,
+        "C" to 100,
+        "XC" to 90,
+        "L" to 50,
+        "XL" to 40,
+        "X" to 10,
+        "IX" to 9,
+        "V" to 5,
+        "IV" to 4,
+        "I" to 1
+    )
+    var result = 0
+    var i = 0
+    if (roman.length > 1) {
+        while (roman.length != i) {
+            if (roman.length > i + 1) {
+                val pare = roman[i].toString() + roman[i + 1].toString()
+                if (pare in numbers) {
+                    result += numbers[pare]!!
+                    i += 2
+                    continue
+                }
+            }
+            result += numbers[roman[i].toString()]!!
+            i += 1
+        }
+    } else return numbers[roman]!!
+    return result
+}
 
 /**
  * Очень сложная (7 баллов)

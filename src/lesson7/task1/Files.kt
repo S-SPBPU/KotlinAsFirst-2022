@@ -3,6 +3,8 @@
 package lesson7.task1
 
 import java.io.File
+import java.util.*
+import java.util.regex.Pattern
 
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
@@ -63,7 +65,11 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Подчёркивание в середине и/или в конце строк значения не имеет.
  */
 fun deleteMarked(inputName: String, outputName: String) {
-    TODO()
+    File(outputName).printWriter().use {
+        for (line in File(inputName).readLines()) {
+            if (!line.matches(Regex("""_+.*"""))) it.println(line)
+        }
+    }
 }
 
 /**
@@ -75,8 +81,17 @@ fun deleteMarked(inputName: String, outputName: String) {
  * Регистр букв игнорировать, то есть буквы е и Е считать одинаковыми.
  *
  */
-fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> = TODO()
-
+fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
+    val file = File(inputName).readText().lowercase()
+    val result = mutableMapOf<String, Int>()
+    substrings.forEach {
+        result[it] = 0
+        for (i in file.indices) {
+            if (file.startsWith(it.lowercase(), i)) result[it] = result[it]!! + 1
+        }
+    }
+    return result
+}
 
 /**
  * Средняя (12 баллов)
@@ -144,7 +159,33 @@ fun centerFile(inputName: String, outputName: String) {
  * 8) Если входной файл удовлетворяет требованиям 1-7, то он должен быть в точности идентичен выходному файлу
  */
 fun alignFileByWidth(inputName: String, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    var max = 0
+    for (line in File(inputName).readLines()) {
+        val lengthCount = line.replace(" +".toRegex(), " ").trim().length
+        if (max < lengthCount) max = lengthCount
+    }
+    for (line in File(inputName).readLines()) {
+        if (line.isBlank()) {
+            writer.appendLine()
+            continue
+        }
+        if (line.trim().split(" ").size == 1) {
+            writer.appendLine(line.trim())
+            continue
+        }
+        var needWhitespace = max - line.replace(" +".toRegex(), "").trim().length
+        val words = line.replace(" +".toRegex(), " ").trim().split(" ").toMutableList()
+        var i = 0
+        while (needWhitespace > 0) {
+            needWhitespace -= 1
+            words[i] = words[i] + ' '
+            i += 1
+            if (i == words.size - 1) i = 0
+        }
+        writer.appendLine(words.joinToString(""))
+    }
+    writer.close()
 }
 
 /**
@@ -282,7 +323,34 @@ Suspendisse ~~et elit in enim tempus iaculis~~.
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    writer.appendLine("<html><body><p>")
+    for (line in File(inputName).readLines()) {
+        if (line.isEmpty()) {
+            writer.appendLine("</p>")
+            writer.appendLine("<p>")
+            continue
+        }
+        val changedLineB = replacing(line, "**", "<b>", "</b>")
+        val changedLineI = replacing(changedLineB, "*", "<i>", "</i>")
+        val changedLineS = replacing(changedLineI, "~~", "<s>", "</s>")
+        writer.appendLine(changedLineS)
+    }
+    writer.appendLine("</p></body></html>")
+    writer.close()
+}
+
+fun replacing(line: String, symbol: String, changeSymbolOpen: String, changeSymbolClose: String): String {
+    val changedLine = line.split("$symbol")
+    val result = mutableListOf<String>()
+    result.add(changedLine[0])
+    for (i in 1 until changedLine.size) {
+        result += if (i % 2 == 0) "$changeSymbolClose"
+        else "$changeSymbolOpen"
+        result += changedLine[i]
+    }
+    if (result.isEmpty()) return line
+    return result.joinToString("")
 }
 
 /**

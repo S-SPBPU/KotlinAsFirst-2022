@@ -324,15 +324,16 @@ Suspendisse ~~et elit in enim tempus iaculis~~.
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
     var result = ""
+    var whitespace = 0
     val writer = File(outputName).bufferedWriter()
     result += "<html><body><p>"
     for (line in File(inputName).readLines()) {
-        result += " " + line.ifEmpty {
-            "</p><p>"
-        }
+        if (line.isEmpty() && whitespace == 0) {
+            result += "</p><p>"
+            whitespace += 1
+        } else result += " $line"
     }
     result += "</p></body></html>"
-    result = result.replace("(</p><p>)+".toRegex(), "</p><p>")
     result = result.replace("(<p></p>)+".toRegex(), "<p>")
     result = result.replace("(<p><p>)+".toRegex(), "<p>")
     result = replacing(result, "**", "<b>", "</b>")

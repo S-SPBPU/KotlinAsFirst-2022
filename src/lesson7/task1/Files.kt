@@ -2,9 +2,9 @@
 
 package lesson7.task1
 
+import java.io.BufferedWriter
 import java.io.File
 import java.util.*
-import java.util.regex.Pattern
 
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
@@ -323,33 +323,31 @@ Suspendisse ~~et elit in enim tempus iaculis~~.
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
+    var result = ""
     val writer = File(outputName).bufferedWriter()
-    writer.appendLine("<html><body><p>")
+    result += "<html><body><p>"
     for (line in File(inputName).readLines()) {
-        if (line.isEmpty()) {
-            writer.appendLine("</p>")
-            writer.appendLine("<p>")
-            continue
+        result += line.ifEmpty {
+            "</p><p>"
         }
-        val changedLineB = replacing(line, "**", "<b>", "</b>")
-        val changedLineI = replacing(changedLineB, "*", "<i>", "</i>")
-        val changedLineS = replacing(changedLineI, "~~", "<s>", "</s>")
-        writer.appendLine(changedLineS)
     }
-    writer.appendLine("</p></body></html>")
+    result += "</p></body></html>"
+    result = replacing(result, "**", "<b>", "</b>")
+    result = replacing(result, "*", "<i>", "</i>")
+    result = replacing(result, "~~", "<s>", "</s>")
+    writer.append(result)
     writer.close()
 }
 
 fun replacing(line: String, symbol: String, changeSymbolOpen: String, changeSymbolClose: String): String {
     val changedLine = line.split("$symbol")
     val result = mutableListOf<String>()
-    result.add(changedLine[0])
+    result += (changedLine[0])
     for (i in 1 until changedLine.size) {
         result += if (i % 2 == 0) "$changeSymbolClose"
         else "$changeSymbolOpen"
         result += changedLine[i]
     }
-    if (result.isEmpty()) return line
     return result.joinToString("")
 }
 

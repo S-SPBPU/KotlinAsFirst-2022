@@ -332,12 +332,12 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         }
     }
     result += "</p></body></html>"
+    result = result.replace("((</p><p>)+|(\n\t\n)+)".toRegex(), "</p><p>")
+    result = result.replace("(<p></p>)+".toRegex(), "<p>")
     result = result.replace("\n", " ")
     result = replacing(result, "**", "<b>", "</b>")
     result = replacing(result, "*", "<i>", "</i>")
     result = replacing(result, "~~", "<s>", "</s>")
-    result = result.replace("(</p><p>)+".toRegex(), "</p><p>")
-    result = result.replace("(<p></p>)+".toRegex(), "<p>")
     writer.append(result)
     writer.close()
 }

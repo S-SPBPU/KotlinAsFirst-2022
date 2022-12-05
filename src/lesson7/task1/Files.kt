@@ -332,6 +332,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         }
     }
     result += "</p></body></html>"
+    result = result.replace("\n", " ")
     result = replacing(result, "**", "<b>", "</b>")
     result = replacing(result, "*", "<i>", "</i>")
     result = replacing(result, "~~", "<s>", "</s>")

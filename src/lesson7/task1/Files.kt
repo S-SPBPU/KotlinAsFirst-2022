@@ -331,10 +331,13 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         if (line.isEmpty() && whitespace == 0) {
             result += "</p><p>"
             whitespace += 1
-        } else {
-            result += " $line"
-            whitespace = 0
+            continue
+        } else if (line.isEmpty()) {
+            whitespace += 1
+            continue
         }
+        result += " $line"
+        whitespace = 0
     }
     result += "</p></body></html>"
     result = result.replace("(<p></p>)+".toRegex(), "<p>")

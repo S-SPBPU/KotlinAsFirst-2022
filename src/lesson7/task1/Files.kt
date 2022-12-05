@@ -327,15 +327,14 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     val writer = File(outputName).bufferedWriter()
     result += "<html><body><p>"
     for (line in File(inputName).readLines()) {
-        result += line.ifEmpty {
+        result += " " + line.ifEmpty {
             "</p><p>"
         }
     }
     result += "</p></body></html>"
-    result = result.replace("((</p><p>)+|(\n\t\n)+)".toRegex(), "</p><p>")
+    result = result.replace("(</p><p>)+".toRegex(), "</p><p>")
     result = result.replace("(<p></p>)+".toRegex(), "<p>")
     result = result.replace("(<p><p>)+".toRegex(), "<p>")
-    result = result.replace("\n", " ")
     result = replacing(result, "**", "<b>", "</b>")
     result = replacing(result, "*", "<i>", "</i>")
     result = replacing(result, "~~", "<s>", "</s>")

@@ -328,11 +328,11 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     val writer = File(outputName).bufferedWriter()
     result += "<html><body><p>"
     for (line in File(inputName).readLines()) {
-        if (line.isEmpty() && whitespace == 0) {
+        if (line.isBlank() && whitespace == 0) {
             result += "</p><p>"
             whitespace += 1
             continue
-        } else if (line.isEmpty()) {
+        } else if (line.isBlank()) {
             whitespace += 1
             continue
         }

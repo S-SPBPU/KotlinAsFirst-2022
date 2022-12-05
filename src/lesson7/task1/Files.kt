@@ -340,7 +340,8 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         whitespace = 0
     }
     result += "</p></body></html>"
-    result = result.replace("(<p></p>)+".toRegex(), "<p>")
+    if (File(inputName).readText().isNotBlank())
+        result = result.replace("(<p></p>)+".toRegex(), "<p>")
     result = result.replace("(<p><p>)+".toRegex(), "<p>")
     result = replacing(result, "**", "<b>", "</b>")
     result = replacing(result, "*", "<i>", "</i>")

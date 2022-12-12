@@ -336,6 +336,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
             }
             if (line.isNotBlank() && whitespace > 0) result += "<p>"
             result += " $line"
+            whitespace = 0
         }
         result += "</p></body></html>"
         if (text.toString().isNotBlank())

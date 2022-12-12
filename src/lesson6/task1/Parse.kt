@@ -137,7 +137,7 @@ fun check(day: Int, month: Int, year: Int): Boolean = year > 0 && daysInMonth(mo
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
 fun flattenPhoneNumber(phone: String): String =
-    if (phone.matches(Regex("""((\+\d+\s*)|(\d\s*)*)(\(\d[\d\s-]*\))?[\d\s-]*""")))
+    if (phone.matches(Regex("""((\+\d+\s*)|(\d\s*)*)(\(\d[\d\s-]*\))?[\d\s-]*""")) && phone.isNotBlank())
         phone.split("(", ")", "-", " ").joinToString("")
     else ""
 

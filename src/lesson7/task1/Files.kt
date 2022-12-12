@@ -2,9 +2,7 @@
 
 package lesson7.task1
 
-import java.io.BufferedWriter
 import java.io.File
-import java.util.*
 
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
@@ -82,13 +80,10 @@ fun deleteMarked(inputName: String, outputName: String) {
  *
  */
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
-    val file = File(inputName).readText().lowercase()
+    val line = File(inputName).readText().lowercase()
     val result = mutableMapOf<String, Int>()
-    substrings.forEach {
-        result[it] = 0
-        for (i in file.indices) {
-            if (file.startsWith(it.lowercase(), i)) result[it] = result[it]!! + 1
-        }
+    for (i in substrings.indices) {
+        result[substrings[i]] = line.windowed(substrings[i].length).count { it == substrings[i].lowercase() }
     }
     return result
 }
@@ -159,33 +154,35 @@ fun centerFile(inputName: String, outputName: String) {
  * 8) Если входной файл удовлетворяет требованиям 1-7, то он должен быть в точности идентичен выходному файлу
  */
 fun alignFileByWidth(inputName: String, outputName: String) {
-    val writer = File(outputName).bufferedWriter()
-    var max = 0
-    for (line in File(inputName).readLines()) {
-        val lengthCount = line.replace(" +".toRegex(), " ").trim().length
-        if (max < lengthCount) max = lengthCount
+    File(outputName).bufferedWriter().use {
+        var max = 0
+        val text = File(inputName).readLines()
+        for (line in text) {
+            val lengthCount = line.replace(" +".toRegex(), " ").trim().length
+            if (max < lengthCount) max = lengthCount
+        }
+        for (line in text) {
+            val cutLine = line.trim()
+            if (cutLine.isBlank()) {
+                it.appendLine()
+                continue
+            }
+            if (cutLine.split(" ").size == 1) {
+                it.appendLine(cutLine.trim())
+                continue
+            }
+            var needWhitespace = max - cutLine.replace(" +".toRegex(), "").length
+            val words = cutLine.replace(" +".toRegex(), " ").split(" ").toMutableList()
+            var i = 0
+            while (needWhitespace > 0) {
+                needWhitespace -= 1
+                words[i] = words[i] + ' '
+                i += 1
+                if (i == words.size - 1) i = 0
+            }
+            it.appendLine(words.joinToString(""))
+        }
     }
-    for (line in File(inputName).readLines()) {
-        if (line.isBlank()) {
-            writer.appendLine()
-            continue
-        }
-        if (line.trim().split(" ").size == 1) {
-            writer.appendLine(line.trim())
-            continue
-        }
-        var needWhitespace = max - line.replace(" +".toRegex(), "").trim().length
-        val words = line.replace(" +".toRegex(), " ").trim().split(" ").toMutableList()
-        var i = 0
-        while (needWhitespace > 0) {
-            needWhitespace -= 1
-            words[i] = words[i] + ' '
-            i += 1
-            if (i == words.size - 1) i = 0
-        }
-        writer.appendLine(words.joinToString(""))
-    }
-    writer.close()
 }
 
 /**
@@ -325,40 +322,40 @@ Suspendisse ~~et elit in enim tempus iaculis~~.
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
     var result = ""
     var whitespace = 0
-    val writer = File(outputName).bufferedWriter()
-    result += "<html><body><p>"
-    for (line in File(inputName).readLines()) {
-        if (line.isBlank() && whitespace == 0) {
-            result += "</p>"
-            whitespace += 1
-            continue
-        } else if (line.isBlank()) {
-            whitespace += 1
-            continue
+    val text = File(inputName).readLines()
+    File(outputName).bufferedWriter().use {
+        result += "<html><body><p>"
+        for (line in text) {
+            if (line.isBlank() && whitespace == 0) {
+                result += "</p>"
+                whitespace += 1
+                continue
+            } else if (line.isBlank()) {
+                whitespace += 1
+                continue
+            }
+            if (line.isNotBlank() && whitespace > 0) result += "<p>"
+            result += " $line"
         }
-        if (line.isNotBlank() && whitespace > 0) result += "<p>"
-        result += " $line"
-        whitespace = 0
+        result += "</p></body></html>"
+        if (text.toString().isNotBlank())
+            result = result.replace("(<p></p>)+".toRegex(), "<p>")
+        result = result.replace("(<p><p>)+".toRegex(), "<p>")
+        result = result.replace("(</p></p>)+".toRegex(), "</p>")
+        result = replacing(result, "**", "<b>", "</b>")
+        result = replacing(result, "*", "<i>", "</i>")
+        result = replacing(result, "~~", "<s>", "</s>")
+        it.append(result)
     }
-    result += "</p></body></html>"
-    if (File(inputName).readText().isNotBlank())
-        result = result.replace("(<p></p>)+".toRegex(), "<p>")
-    result = result.replace("(<p><p>)+".toRegex(), "<p>")
-    result = result.replace("(</p></p>)+".toRegex(), "</p>")
-    result = replacing(result, "**", "<b>", "</b>")
-    result = replacing(result, "*", "<i>", "</i>")
-    result = replacing(result, "~~", "<s>", "</s>")
-    writer.append(result)
-    writer.close()
 }
 
 fun replacing(line: String, symbol: String, changeSymbolOpen: String, changeSymbolClose: String): String {
-    val changedLine = line.split("$symbol")
+    val changedLine = line.split(symbol)
     val result = mutableListOf<String>()
     result += (changedLine[0])
     for (i in 1 until changedLine.size) {
-        result += if (i % 2 == 0) "$changeSymbolClose"
-        else "$changeSymbolOpen"
+        result += if (i % 2 == 0) changeSymbolClose
+        else changeSymbolOpen
         result += changedLine[i]
     }
     return result.joinToString("")

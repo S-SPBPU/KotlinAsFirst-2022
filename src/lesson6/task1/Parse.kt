@@ -92,7 +92,7 @@ val month = listOf(
 )
 
 fun dateStrToDigit(str: String): String {
-    if (!str.matches(Regex("""\d* [а-я]* \d*"""))) return ""
+    if (!str.matches(Regex("""\d+ [а-я]+ \d+"""))) return ""
     val result = str.split(" ").toMutableList()
     if (result[1] in month) result[1] = (month.indexOf(result[1]) + 1).toString()
     else return ""
@@ -112,7 +112,7 @@ fun dateStrToDigit(str: String): String {
  * входными данными.
  */
 fun dateDigitToStr(digital: String): String {
-    if (!digital.matches(Regex("""\d*\.([0-9]{2})\.\d*"""))) return ""
+    if (!digital.matches(Regex("""\d+\.([0-9]{2})\.\d+"""))) return ""
     val result = digital.split(".").map { it.toInt() }.toMutableList()
     if (result[1] !in 1..12) return ""
     if (check(result[0], result[1], result[2]))
@@ -137,10 +137,7 @@ fun check(day: Int, month: Int, year: Int): Boolean = year > 0 && daysInMonth(mo
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
 fun flattenPhoneNumber(phone: String): String =
-    if (phone.matches(Regex("""\+?(\(\S\))?.*""")) &&
-        !phone.contains(Regex("""\( *\)""")) &&
-        phone.matches(Regex("""[\d\s\-+()]+"""))
-    )
+    if (phone.matches(Regex("""((\+\d+\s*)|(\d\s*)*)(\(\d[\d\s-]*\))?[\d\s-]*""")))
         phone.split("(", ")", "-", " ").joinToString("")
     else ""
 
@@ -157,7 +154,7 @@ fun flattenPhoneNumber(phone: String): String =
 fun bestLongJump(jumps: String): Int {
     val numbers = jumps.split(" ", "%", "-")
     var max = 0
-    if (!jumps.matches(Regex("""((\d+|%|-)\s)+(\d+|%|-)""")) ||
+    if (!jumps.matches(Regex("""((\d+|%|-)\s)*(\d+|%|-)""")) ||
         !jumps.contains(Regex("""\d"""))
     ) return -1
     else for (i in numbers) {
@@ -180,7 +177,7 @@ fun bestLongJump(jumps: String): Int {
 fun bestHighJump(jumps: String): Int {
     val numbers = jumps.split(" ")
     var max = 0
-    if (jumps.contains(Regex("""[^\d\s%\-+]""")) || !jumps.contains(Regex("""\+""")) || jumps.contains(Regex("""([%+\-]\S\d+)"""))) return -1
+    if (!jumps.matches(Regex("""(\d+\s[+%\-]+\s?)+"""))) return -1
     else for (i in 0..numbers.size - 2) {
         if ('+' in numbers[i + 1] && numbers[i].toInt() > max) max = numbers[i].toInt()
     }
@@ -197,7 +194,7 @@ fun bestHighJump(jumps: String): Int {
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 fun plusMinus(expression: String): Int {
-    require(expression.matches(Regex("""\d+(\s([+\-])\s\d+)*"""))) { IllegalArgumentException(expression) }
+    require(expression.matches(Regex("""\d+(\s[+\-]\s\d+)*"""))) { IllegalArgumentException(expression) }
     val task = expression.split(" ")
     var result = task[0].toInt()
     if (task.size > 1) {
@@ -242,7 +239,7 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше нуля либо равны нулю.
  */
 fun mostExpensive(description: String): String {
-    if (!description.matches(Regex("""((\S+\s\d+(\.\d+)?;\s)+)?(\S+ \d+(\.\d+)?)"""))) return ""
+    if (!description.matches(Regex("""(\S+\s\d+(\.\d+)?;\s)*(\S+ \d+(\.\d+)?)"""))) return ""
     val list = description.split(";", " ")
     var max = 0.0
     var maxName = ""
@@ -284,21 +281,17 @@ fun fromRoman(roman: String): Int {
         "I" to 1
     )
     var result = 0
-    var i = 0
-    if (roman.length > 1) {
-        while (roman.length != i) {
-            if (roman.length > i + 1) {
-                val pare = roman[i].toString() + roman[i + 1].toString()
-                if (pare in numbers) {
-                    result += numbers[pare]!!
-                    i += 2
-                    continue
-                }
+    var romanNumber = roman
+    for ((key, value) in numbers) {
+        while (romanNumber.startsWith(key) && romanNumber.isNotEmpty()) { //проверяем, начинается ли римское число с букв в коллекции
+            val cutRoman = romanNumber.substring(key.length, romanNumber.length)
+            for ((key2, value2) in numbers) {
+                if (cutRoman.startsWith(key2) && value < value2) return -1
             }
-            result += numbers[roman[i].toString()]!!
-            i += 1
+            result += value
+            romanNumber = cutRoman //убираем найденные в начале римского чилса буквы из коллекции
         }
-    } else return numbers[roman]!!
+    }
     return result
 }
 

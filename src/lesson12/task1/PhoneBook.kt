@@ -19,6 +19,7 @@ package lesson12.task1
  */
 class PhoneBook {
     private val phoneBook = mutableMapOf<String, MutableSet<String>>()
+    private val allPhones = mutableSetOf<String>()
 
     /**
      * Добавить человека.
@@ -28,7 +29,7 @@ class PhoneBook {
      */
     fun addHuman(name: String): Boolean {
         if (name in phoneBook) return false
-        else phoneBook[name] = mutableSetOf()
+        phoneBook[name] = mutableSetOf()
         return true
     }
 
@@ -40,7 +41,7 @@ class PhoneBook {
      */
     fun removeHuman(name: String): Boolean {
         if (name !in phoneBook) return false
-        else phoneBook -= name
+        phoneBook -= name
         return true
     }
 
@@ -52,9 +53,9 @@ class PhoneBook {
      * либо такой номер телефона зарегистрирован за другим человеком.
      */
     fun addPhone(name: String, phone: String): Boolean {
-        for ((key, value) in phoneBook)
-            if (value.contains(phone)) return false
-        phoneBook[name] = (phoneBook[name]!! + phone).toMutableSet()
+        if (name !in phoneBook || phone in allPhones) return false
+        phoneBook[name]?.add(phone)
+        allPhones.add(phone)
         return true
     }
 
@@ -65,12 +66,10 @@ class PhoneBook {
      * либо у него не было такого номера телефона.
      */
     fun removePhone(name: String, phone: String): Boolean {
-        for ((key, value) in phoneBook)
-            if (value.contains(phone)) {
-                phoneBook[name] = (phoneBook[name]!! - phone).toMutableSet()
-                return true
-            }
-        return false
+        if (name !in phoneBook || phone !in phoneBook[name]!!) return false
+        phoneBook[name]?.remove(phone)
+        allPhones.remove(phone)
+        return true
     }
 
     /**
@@ -97,13 +96,7 @@ class PhoneBook {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is PhoneBook) return false
-        val ourPhonesBook = phoneBook
-        val otherPhonesBook = other.phoneBook
-        for ((key, value) in ourPhonesBook)
-            if (!otherPhonesBook.contains(key) && value != otherPhonesBook[key]) return false
-        for ((key, value) in otherPhonesBook)
-            if (!ourPhonesBook.contains(key) && value != ourPhonesBook[key]) return false
-        return true
+        return phoneBook == other.phoneBook
     }
 
     override fun hashCode(): Int = phoneBook.hashCode()
